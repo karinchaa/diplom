@@ -1,0 +1,119 @@
+{% extends "Shop/base.html" %}
+
+{% block content1 %}
+{% if request.user.is_staff %}
+
+<h2 id="logo_text">Від користувачів</h2>
+<table class="table_basket">
+        <tr id="tr1">
+            <td><a href="{% url 'orders' id=1 %}" id="product_txt">Нові замовлення:</a></td>
+            <td style="background-color: #08bf39;">{{ lnew }}</td>
+        </tr>
+        <tr id="tr1">
+            <td><a href="{% url 'orders' id=2 %}" id="product_txt">В роботі:</a></td>
+            <td style="background-color: orange;">{{ lwork }}</td>
+        </tr>
+        <tr id="tr1">
+            <td><a href="{% url 'orders' id=3 %}" id="product_txt">Виконані:</a></td>
+            <td style="background-color: blue;">{{ lend }}</td>
+        </tr>
+</table>
+
+<hr>
+<h2 id="logo_text">Без користувача</h2>
+<table class="table_basket">
+        <tr id="tr1">
+            <td><a href="{% url 'orders0' id=1 %}" id="product_txt">Нові замовлення:</a></td>
+            <td style="background-color: #08bf39;">{{ NUlnew }}</td>
+        </tr>
+        <tr id="tr1">
+            <td><a href="{% url 'orders0' id=2 %}" id="product_txt">В роботі:</a></td>
+            <td style="background-color: orange;">{{ NUlwork }}</td>
+        </tr>
+        <tr id="tr1">
+            <td><a href="{% url 'orders0' id=3 %}" id="product_txt">Виконані:</a></td>
+            <td style="background-color: blue;">{{ NUlend }}</td>
+        </tr>
+</table>
+{% endif %}
+
+{% endblock %}
+
+{% block content %}
+
+{% if request.user.is_staff %}
+
+<p class="form-label" >Замовлення:</p>
+{% for ord in list_orders %}
+<table class="table_basket">
+    <!-- Верхній рядок з заголовками (необов'язково) -->
+    <tr id="tr2">
+        <th>№ {{ ord.6 }}</th>
+        <th>{{ ord.3 }}</th>
+
+        <th width="80"><a href="{% url 'status' id=ord.6 stat=1 %}" id="del_bask1">Новий</a></th>
+        <th width="150"><a href="{% url 'status' id=ord.6 stat=2 %}" id="del_bask1">В роботі</a></th>
+        <th width="80"><a href="{% url 'status' id=ord.6 stat=3 %}" id="del_bask1">Виконаний</a></th>
+
+        {% if ord.2 == 1 %}
+            <th style="background-color: #08bf39; width:120px;">Новий</th>
+        {% elif ord.2 == 2 %}
+            <th style="background-color: orange; width:120px;">В роботі</th>
+        {% elif ord.2 == 3 %}
+            <th style="background-color: blue; width:120px;">Виконаний</th>
+        {% else %}
+            {{ ord.2 }}
+        {% endif %}
+    </tr>
+
+</table>
+<details>
+  <summary id="del_bask" style="background-color: #578cb5;">Клікніть, щоб побачити деталі</summary>
+
+  <table class="table_basket">
+                <tr id="tr2">
+                    <th width="400">Товар</th>
+                    <th width="50">Кількість</th>
+                    <th width="70">Ціна</th>
+                    <th width="70">Вартість</th>
+                </tr>
+                {% for i in ord.1 %}
+                <tr id="tr1">
+                    <th><img class="prew" src="{{ i.5.img.url }}"><a id="product_txt" href="{% url 'product' id=i.6.id %}">{{  i.6 }}</a></th>
+                    <th>{{ i.1 }}</th>
+                    <th>{{ i.2 }}</th>
+                    <th>{{ i.3 }}</th>
+                </tr>
+                {% endfor %}
+  </table>
+
+    <table class="table_basket">
+        <tr id="tr1">
+            <th>Id замовлення</th>
+            <th>{{ ord.6 }}</th>
+        </tr>
+        <tr id="tr2">
+            <th>Нікнейм замовника:</th>
+            <th>{{ ord.0 }}</th>
+        </tr>
+        <tr id="tr1">
+            <th>Ціна замовлення:</th>
+            <th>{{ ord.4 }} грн</th>
+        </tr>
+        <tr id="tr2">
+            <th>Телефон покупця:</th>
+            <th>{{ ord.5.phone }}</th>
+        </tr>
+        <tr id="tr1">
+            <th>Адрес покупця:</th>
+            <th>{{ ord.5.address }}</th>
+        </tr>
+    </table>
+</details>
+<hr>
+
+{% endfor %}
+
+{% endif %}
+
+{% endblock %}

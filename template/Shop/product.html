@@ -1,0 +1,142 @@
+{% extends "Shop/base.html" %}
+
+{% block content1 %}
+
+{% if user.is_authenticated %}
+<img class="avatar" src="{{ userinfo.avatar.url }}" width="100">
+<a id="logo_text" href="{% url 'user' %}">{{ user.username }}</a>
+<a href="{% url 'logout' %}" id="del_1bask">Вийти</a>
+
+<br>
+{% else %}
+
+<form class="navbar-form navbar-right" method="POST" role="form" action="{% url 'login' %}">
+    {% csrf_token %}
+
+    <input type="text" class="table_basket1" name="username" id="username0" placeholder="Ваш нікнейм">
+
+    <input type="password" class="table_basket1" name="password" id="password0" placeholder="Пароль">
+
+    <button type="submit" id="del_1bask">Війти</button>
+</form>
+<a id="del_3bask" style="background-color: #16496e;" href="{% url 'user' %}">Зареєеструватись</a>
+
+{% endif %}
+
+{% if request.user.is_staff %}
+
+{% endif %}
+
+
+
+{% for cat in category %}
+    <div class="category" style="background-image: url('{{ cat.img_cat.url }}');">
+        <a id="category" href="{% url 'category' name=cat.name id=0 %}">{{ cat.name }}</a>
+    </div>
+{% endfor %}
+
+{% endblock %}
+
+
+{% block content %}
+
+{% if product.imgproduct_set.all %}
+    <img class="product_img_big" src="{{ product.imgproduct_set.first.img.url }}" alt="Зображення поста">
+{% endif %}
+
+<div class="product_form">
+    <p id="product_txt_big">{{ product.name }}</p>
+    <p id="product_txt_big" >Ціна: {{ product.price }} грн</p>
+    {% if user.is_authenticated %}
+        <form action="{% url 'product' id=product.id %}" method="post">
+            {% csrf_token %}
+            <input type="number" id="inp_numb" name="quantity" value="1">
+            <button type="submit" id="teg">До кошика</button>
+        </form>
+    {% else %}
+
+    <table class="table_basket">
+        <tr  id="tr2">
+                <td width="100">Купити в один клік</td>
+        </tr>
+    </table>
+    <table class="table_basket">
+        <tr id="tr2">
+            <form method="POST" action="{% url 'sessio' id=product.id %}">
+                {% csrf_token %}
+                <td  width="30"><input type="number" id="inp_numb" name="quantity" value="1"></td>
+                <td><button type="submit" id="teg">До кошика</button></td>
+            </form>
+        </tr>
+    </table>
+
+    {% endif %}
+
+    <p id="product_txt_big">{{ add }}</p>
+
+</div>
+
+<div class="imgs">
+    {% for im in imgs %}
+    <img class="product_img_min" src="{{ im.img.url }}">
+    {% endfor %}
+
+</div>
+<div class="description">
+    <p id="product_txt_big">{{ product.name }}</p>
+    <p id="product_txt_big2">{{ product.description }}</p>
+</div>
+
+
+
+<p id="logo_text">Відгуки:</p>
+
+{% if user.is_authenticated %}
+<form class="navbar-form navbar-right" method="POST" role="form" action="{% url 'product' id=product.id %}">
+    {% csrf_token %}
+    <textarea class="text_area2" name="description" placeholder="Добавити коментар"></textarea>
+    <button type="submit" id="del_2bask">Добавити відгук</button>
+</form>
+{% else %}
+<br>
+<p id="logo_text">Авторизуйтесь щоб добавити відгук:</p>
+<br>
+{% endif %}
+
+
+
+
+    {% for com in coments %}
+    <table class="table_coments">
+        <tr>
+            <td width="80">{{ com.0 }}</td>
+            <td >{{ com.3 }}</td>
+        </tr>
+        <tr id="tr2">
+            <td style="vertical-align: top;">
+                <img src="{{ com.4.url }}" width="80">
+            </td>
+            <td id="coments_txt">{{ com.2 }}</td>
+        </tr>
+    </table>
+    {% endfor %}
+
+
+
+{% endblock %}
+
+{% block basket %}
+
+{% if user.is_authenticated %}
+
+<a id="logo_text1"  href="{% url 'user' %}">Кошик</a>
+<p id="logo_text1" >Товарів: {{ basket }} штук</p>
+<p id="logo_text1" >Сума {{ sum }} грн </p>
+
+{% else %}
+<a id="logo_text1"  href="{% url 'basket' %}">Кошик</a>
+<p id="logo_text1" >Товарів: {{ no_user.1 }} штук</p>
+<p id="logo_text1" >Сума {{ no_user.2 }} грн </p>
+{% endif %}
+
+{% endblock %}

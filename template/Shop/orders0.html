@@ -1,0 +1,125 @@
+{% extends "Shop/base.html" %}
+
+{% block content1 %}
+
+{% if request.user.is_staff %}
+
+<h2 id="logo_text">Від користувачів</h2>
+<table class="table_basket">
+        <tr id="tr1">
+            <td><a href="{% url 'orders' id=1 %}" id="product_txt">Нові замовлення:</a></td>
+            <td style="background-color: #08bf39;">{{ lnew }}</td>
+        </tr>
+        <tr id="tr1">
+            <td><a href="{% url 'orders' id=2 %}" id="product_txt">В роботі:</a></td>
+            <td style="background-color: orange;">{{ lwork }}</td>
+        </tr>
+        <tr id="tr1">
+            <td><a href="{% url 'orders' id=3 %}" id="product_txt">Виконані:</a></td>
+            <td style="background-color: blue;">{{ lend }}</td>
+        </tr>
+</table>
+
+<hr>
+<h2 id="logo_text">Без користувача</h2>
+<table class="table_basket">
+        <tr id="tr1">
+            <td><a href="{% url 'orders0' id=1 %}" id="product_txt">Нові замовлення:</a></td>
+            <td style="background-color: #08bf39;">{{ NUlnew }}</td>
+        </tr>
+        <tr id="tr1">
+            <td><a href="{% url 'orders0' id=2 %}" id="product_txt">В роботі:</a></td>
+            <td style="background-color: orange;">{{ NUlwork }}</td>
+        </tr>
+        <tr id="tr1">
+            <td><a href="{% url 'orders0' id=3 %}" id="product_txt">Виконані:</a></td>
+            <td style="background-color: blue;">{{ NUlend }}</td>
+        </tr>
+</table>
+{% endif %}
+
+{% endblock %}
+
+{% block content %}
+
+{% if request.user.is_staff %}
+<p class="form-label" >Замовлення:</p>
+
+{% for ord in no_user_list %}
+<table class="table_basket">
+    <!-- Верхній рядок з заголовками (необов'язково) -->
+    <tr id="tr2">
+        <th>№ {{ ord.7 }}</th>
+        <th>{{ ord.5 }}</th>
+        <th width="80"><a href="{% url 'status0' id=ord.7 stat=1 %}" id="del_bask1">Новий</a></th>
+        <th width="150"><a href="{% url 'status0' id=ord.7 stat=2 %}" id="del_bask1">В роботі</a></th>
+        <th width="80"><a href="{% url 'status0' id=ord.7 stat=3 %}" id="del_bask1">Виконаний</a></th>
+
+        {% if ord.4 == 1 %}
+            <th style="background-color: #08bf39; width:120px;">Новий</th>
+        {% elif ord.4 == 2 %}
+            <th style="background-color: orange; width:120px;">В роботі</th>
+        {% elif ord.4 == 3 %}
+            <th style="background-color: blue; width:120px;">Виконаний</th>
+        {% else %}
+            {{ ord.4 }}
+        {% endif %}
+    </tr>
+
+</table>
+<details>
+  <summary id="del_bask" style="background-color: #578cb5;">Клікніть, щоб побачити деталі</summary>
+
+  <table class="table_basket">
+                <tr id="tr2">
+                    <th width="400">Товар</th>
+                    <th width="50">Кількість</th>
+                    <th width="70">Ціна</th>
+                    <th width="70">Вартість</th>
+                </tr>
+                {% for i in ord.0 %}
+                <tr id="tr1">
+                    <th><img class="prew" src="{{ i.1.img.url }}"><a id="product_txt" href="{% url 'product' id=i.0.id %}">{{  i.0.name }}</a></th>
+                    <th>{{ i.4 }}</th>
+                    <th>{{ i.2 }}</th>
+                    <th>{{ i.3 }}</th>
+                </tr>
+                {% endfor %}
+  </table>
+    <form action="{% url 'address' id=ord.7 %}" method="POST">
+        {% csrf_token %}
+    <table class="table_basket">
+        <tr id="tr1">
+            <th>№ замовлення</th>
+            <th>{{ ord.7 }}</th>
+        </tr>
+        <tr id="tr1">
+            <th>ФІО:</th>
+            <th><input style="width:500px;" type="text" class="table_basket1" name="name" value="{{  ord.1 }}"></th>
+        </tr>
+        <tr id="tr1">
+            <th>Ціна замовлення:</th>
+            <th><input style="width:500px;" type="text" class="table_basket1" name="price" value="{{  ord.6 }}"></th>
+        </tr>
+        <tr id="tr1">
+            <th>Телефон покупця:</th>
+            <th><input style="width:500px;" type="text" class="table_basket1" name="phone" value="{{  ord.2  }}"></th>
+        </tr>
+        <tr id="tr1">
+            <th>Адрес покупця:</th>
+
+            <th>
+                <input style="width:500px;" type="text" class="table_basket1" name="address" value="{{  ord.3  }}">
+            </th>
+        </tr>
+    </table>
+        <button type="submit" id="order" >Змінити</button>
+    </form>
+</details>
+<hr>
+
+{% endfor %}
+
+{% endif %}
+
+{% endblock %}
